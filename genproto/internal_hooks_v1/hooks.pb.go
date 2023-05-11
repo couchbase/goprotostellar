@@ -255,6 +255,7 @@ type ValueRef struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Value:
+	//
 	//	*ValueRef_RequestField
 	//	*ValueRef_CounterValue
 	//	*ValueRef_JsonValue
@@ -412,6 +413,7 @@ type HookAction struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Action:
+	//
 	//	*HookAction_If_
 	//	*HookAction_Counter_
 	//	*HookAction_WaitOnBarrier_

@@ -455,6 +455,7 @@ type WatchRoutingResponse struct {
 	// cluster.
 	Endpoints []*RoutingEndpoint `protobuf:"bytes,2,rep,name=endpoints,proto3" json:"endpoints,omitempty"`
 	// Types that are assignable to DataRouting:
+	//
 	//	*WatchRoutingResponse_VbucketDataRouting
 	DataRouting  isWatchRoutingResponse_DataRouting `protobuf_oneof:"data_routing"`
 	QueryRouting *QueryRouting                      `protobuf:"bytes,4,opt,name=query_routing,json=queryRouting,proto3,oneof" json:"query_routing,omitempty"`
