@@ -26,7 +26,6 @@ type KvServiceClient interface {
 	GetAndTouch(ctx context.Context, in *GetAndTouchRequest, opts ...grpc.CallOption) (*GetAndTouchResponse, error)
 	GetAndLock(ctx context.Context, in *GetAndLockRequest, opts ...grpc.CallOption) (*GetAndLockResponse, error)
 	Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error)
-	GetReplica(ctx context.Context, in *GetReplicaRequest, opts ...grpc.CallOption) (*GetReplicaResponse, error)
 	Touch(ctx context.Context, in *TouchRequest, opts ...grpc.CallOption) (*TouchResponse, error)
 	Exists(ctx context.Context, in *ExistsRequest, opts ...grpc.CallOption) (*ExistsResponse, error)
 	Insert(ctx context.Context, in *InsertRequest, opts ...grpc.CallOption) (*InsertResponse, error)
@@ -39,6 +38,7 @@ type KvServiceClient interface {
 	Prepend(ctx context.Context, in *PrependRequest, opts ...grpc.CallOption) (*PrependResponse, error)
 	LookupIn(ctx context.Context, in *LookupInRequest, opts ...grpc.CallOption) (*LookupInResponse, error)
 	MutateIn(ctx context.Context, in *MutateInRequest, opts ...grpc.CallOption) (*MutateInResponse, error)
+	GetAllReplicas(ctx context.Context, in *GetAllReplicasRequest, opts ...grpc.CallOption) (KvService_GetAllReplicasClient, error)
 	RangeScan(ctx context.Context, in *RangeScanRequest, opts ...grpc.CallOption) (*RangeScanResponse, error)
 }
 
@@ -80,15 +80,6 @@ func (c *kvServiceClient) GetAndLock(ctx context.Context, in *GetAndLockRequest,
 func (c *kvServiceClient) Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error) {
 	out := new(UnlockResponse)
 	err := c.cc.Invoke(ctx, "/couchbase.kv.v1.KvService/Unlock", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *kvServiceClient) GetReplica(ctx context.Context, in *GetReplicaRequest, opts ...grpc.CallOption) (*GetReplicaResponse, error) {
-	out := new(GetReplicaResponse)
-	err := c.cc.Invoke(ctx, "/couchbase.kv.v1.KvService/GetReplica", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -203,6 +194,38 @@ func (c *kvServiceClient) MutateIn(ctx context.Context, in *MutateInRequest, opt
 	return out, nil
 }
 
+func (c *kvServiceClient) GetAllReplicas(ctx context.Context, in *GetAllReplicasRequest, opts ...grpc.CallOption) (KvService_GetAllReplicasClient, error) {
+	stream, err := c.cc.NewStream(ctx, &KvService_ServiceDesc.Streams[0], "/couchbase.kv.v1.KvService/GetAllReplicas", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &kvServiceGetAllReplicasClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type KvService_GetAllReplicasClient interface {
+	Recv() (*GetAllReplicasResponse, error)
+	grpc.ClientStream
+}
+
+type kvServiceGetAllReplicasClient struct {
+	grpc.ClientStream
+}
+
+func (x *kvServiceGetAllReplicasClient) Recv() (*GetAllReplicasResponse, error) {
+	m := new(GetAllReplicasResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *kvServiceClient) RangeScan(ctx context.Context, in *RangeScanRequest, opts ...grpc.CallOption) (*RangeScanResponse, error) {
 	out := new(RangeScanResponse)
 	err := c.cc.Invoke(ctx, "/couchbase.kv.v1.KvService/RangeScan", in, out, opts...)
@@ -220,7 +243,6 @@ type KvServiceServer interface {
 	GetAndTouch(context.Context, *GetAndTouchRequest) (*GetAndTouchResponse, error)
 	GetAndLock(context.Context, *GetAndLockRequest) (*GetAndLockResponse, error)
 	Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error)
-	GetReplica(context.Context, *GetReplicaRequest) (*GetReplicaResponse, error)
 	Touch(context.Context, *TouchRequest) (*TouchResponse, error)
 	Exists(context.Context, *ExistsRequest) (*ExistsResponse, error)
 	Insert(context.Context, *InsertRequest) (*InsertResponse, error)
@@ -233,6 +255,7 @@ type KvServiceServer interface {
 	Prepend(context.Context, *PrependRequest) (*PrependResponse, error)
 	LookupIn(context.Context, *LookupInRequest) (*LookupInResponse, error)
 	MutateIn(context.Context, *MutateInRequest) (*MutateInResponse, error)
+	GetAllReplicas(*GetAllReplicasRequest, KvService_GetAllReplicasServer) error
 	RangeScan(context.Context, *RangeScanRequest) (*RangeScanResponse, error)
 	mustEmbedUnimplementedKvServiceServer()
 }
@@ -252,9 +275,6 @@ func (UnimplementedKvServiceServer) GetAndLock(context.Context, *GetAndLockReque
 }
 func (UnimplementedKvServiceServer) Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Unlock not implemented")
-}
-func (UnimplementedKvServiceServer) GetReplica(context.Context, *GetReplicaRequest) (*GetReplicaResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetReplica not implemented")
 }
 func (UnimplementedKvServiceServer) Touch(context.Context, *TouchRequest) (*TouchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Touch not implemented")
@@ -291,6 +311,9 @@ func (UnimplementedKvServiceServer) LookupIn(context.Context, *LookupInRequest) 
 }
 func (UnimplementedKvServiceServer) MutateIn(context.Context, *MutateInRequest) (*MutateInResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MutateIn not implemented")
+}
+func (UnimplementedKvServiceServer) GetAllReplicas(*GetAllReplicasRequest, KvService_GetAllReplicasServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetAllReplicas not implemented")
 }
 func (UnimplementedKvServiceServer) RangeScan(context.Context, *RangeScanRequest) (*RangeScanResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RangeScan not implemented")
@@ -376,24 +399,6 @@ func _KvService_Unlock_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(KvServiceServer).Unlock(ctx, req.(*UnlockRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _KvService_GetReplica_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetReplicaRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(KvServiceServer).GetReplica(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/couchbase.kv.v1.KvService/GetReplica",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KvServiceServer).GetReplica(ctx, req.(*GetReplicaRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -614,6 +619,27 @@ func _KvService_MutateIn_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _KvService_GetAllReplicas_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(GetAllReplicasRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(KvServiceServer).GetAllReplicas(m, &kvServiceGetAllReplicasServer{stream})
+}
+
+type KvService_GetAllReplicasServer interface {
+	Send(*GetAllReplicasResponse) error
+	grpc.ServerStream
+}
+
+type kvServiceGetAllReplicasServer struct {
+	grpc.ServerStream
+}
+
+func (x *kvServiceGetAllReplicasServer) Send(m *GetAllReplicasResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 func _KvService_RangeScan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RangeScanRequest)
 	if err := dec(in); err != nil {
@@ -654,10 +680,6 @@ var KvService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Unlock",
 			Handler:    _KvService_Unlock_Handler,
-		},
-		{
-			MethodName: "GetReplica",
-			Handler:    _KvService_GetReplica_Handler,
 		},
 		{
 			MethodName: "Touch",
@@ -712,6 +734,12 @@ var KvService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _KvService_RangeScan_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetAllReplicas",
+			Handler:       _KvService_GetAllReplicas_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "couchbase/kv/v1/kv.proto",
 }
