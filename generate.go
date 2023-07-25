@@ -11,6 +11,7 @@
 //go:generate protostellar couchbase/admin/bucket/v1/bucket.proto
 //go:generate protostellar couchbase/admin/collection/v1/collection.proto
 //go:generate protostellar couchbase/admin/query/v1/query.proto
+//go:generate protostellar couchbase/admin/search/v1/search.proto
 //go:generate protostellar couchbase/internal/hooks/v1/hooks.proto
 
 package main
