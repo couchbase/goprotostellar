@@ -39,7 +39,6 @@ type KvServiceClient interface {
 	LookupIn(ctx context.Context, in *LookupInRequest, opts ...grpc.CallOption) (*LookupInResponse, error)
 	MutateIn(ctx context.Context, in *MutateInRequest, opts ...grpc.CallOption) (*MutateInResponse, error)
 	GetAllReplicas(ctx context.Context, in *GetAllReplicasRequest, opts ...grpc.CallOption) (KvService_GetAllReplicasClient, error)
-	RangeScan(ctx context.Context, in *RangeScanRequest, opts ...grpc.CallOption) (*RangeScanResponse, error)
 }
 
 type kvServiceClient struct {
@@ -226,15 +225,6 @@ func (x *kvServiceGetAllReplicasClient) Recv() (*GetAllReplicasResponse, error) 
 	return m, nil
 }
 
-func (c *kvServiceClient) RangeScan(ctx context.Context, in *RangeScanRequest, opts ...grpc.CallOption) (*RangeScanResponse, error) {
-	out := new(RangeScanResponse)
-	err := c.cc.Invoke(ctx, "/couchbase.kv.v1.KvService/RangeScan", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // KvServiceServer is the server API for KvService service.
 // All implementations must embed UnimplementedKvServiceServer
 // for forward compatibility
@@ -256,7 +246,6 @@ type KvServiceServer interface {
 	LookupIn(context.Context, *LookupInRequest) (*LookupInResponse, error)
 	MutateIn(context.Context, *MutateInRequest) (*MutateInResponse, error)
 	GetAllReplicas(*GetAllReplicasRequest, KvService_GetAllReplicasServer) error
-	RangeScan(context.Context, *RangeScanRequest) (*RangeScanResponse, error)
 	mustEmbedUnimplementedKvServiceServer()
 }
 
@@ -314,9 +303,6 @@ func (UnimplementedKvServiceServer) MutateIn(context.Context, *MutateInRequest) 
 }
 func (UnimplementedKvServiceServer) GetAllReplicas(*GetAllReplicasRequest, KvService_GetAllReplicasServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetAllReplicas not implemented")
-}
-func (UnimplementedKvServiceServer) RangeScan(context.Context, *RangeScanRequest) (*RangeScanResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RangeScan not implemented")
 }
 func (UnimplementedKvServiceServer) mustEmbedUnimplementedKvServiceServer() {}
 
@@ -640,24 +626,6 @@ func (x *kvServiceGetAllReplicasServer) Send(m *GetAllReplicasResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _KvService_RangeScan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RangeScanRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(KvServiceServer).RangeScan(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/couchbase.kv.v1.KvService/RangeScan",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KvServiceServer).RangeScan(ctx, req.(*RangeScanRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // KvService_ServiceDesc is the grpc.ServiceDesc for KvService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -728,10 +696,6 @@ var KvService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MutateIn",
 			Handler:    _KvService_MutateIn_Handler,
-		},
-		{
-			MethodName: "RangeScan",
-			Handler:    _KvService_RangeScan_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
