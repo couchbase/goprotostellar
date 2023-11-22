@@ -28,6 +28,7 @@ type QueryAdminServiceClient interface {
 	DropPrimaryIndex(ctx context.Context, in *DropPrimaryIndexRequest, opts ...grpc.CallOption) (*DropPrimaryIndexResponse, error)
 	DropIndex(ctx context.Context, in *DropIndexRequest, opts ...grpc.CallOption) (*DropIndexResponse, error)
 	BuildDeferredIndexes(ctx context.Context, in *BuildDeferredIndexesRequest, opts ...grpc.CallOption) (*BuildDeferredIndexesResponse, error)
+	WaitForIndexOnline(ctx context.Context, in *WaitForIndexOnlineRequest, opts ...grpc.CallOption) (*WaitForIndexOnlineResponse, error)
 }
 
 type queryAdminServiceClient struct {
@@ -92,6 +93,15 @@ func (c *queryAdminServiceClient) BuildDeferredIndexes(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *queryAdminServiceClient) WaitForIndexOnline(ctx context.Context, in *WaitForIndexOnlineRequest, opts ...grpc.CallOption) (*WaitForIndexOnlineResponse, error) {
+	out := new(WaitForIndexOnlineResponse)
+	err := c.cc.Invoke(ctx, "/couchbase.admin.query.v1.QueryAdminService/WaitForIndexOnline", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryAdminServiceServer is the server API for QueryAdminService service.
 // All implementations must embed UnimplementedQueryAdminServiceServer
 // for forward compatibility
@@ -102,6 +112,7 @@ type QueryAdminServiceServer interface {
 	DropPrimaryIndex(context.Context, *DropPrimaryIndexRequest) (*DropPrimaryIndexResponse, error)
 	DropIndex(context.Context, *DropIndexRequest) (*DropIndexResponse, error)
 	BuildDeferredIndexes(context.Context, *BuildDeferredIndexesRequest) (*BuildDeferredIndexesResponse, error)
+	WaitForIndexOnline(context.Context, *WaitForIndexOnlineRequest) (*WaitForIndexOnlineResponse, error)
 	mustEmbedUnimplementedQueryAdminServiceServer()
 }
 
@@ -126,6 +137,9 @@ func (UnimplementedQueryAdminServiceServer) DropIndex(context.Context, *DropInde
 }
 func (UnimplementedQueryAdminServiceServer) BuildDeferredIndexes(context.Context, *BuildDeferredIndexesRequest) (*BuildDeferredIndexesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildDeferredIndexes not implemented")
+}
+func (UnimplementedQueryAdminServiceServer) WaitForIndexOnline(context.Context, *WaitForIndexOnlineRequest) (*WaitForIndexOnlineResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WaitForIndexOnline not implemented")
 }
 func (UnimplementedQueryAdminServiceServer) mustEmbedUnimplementedQueryAdminServiceServer() {}
 
@@ -248,6 +262,24 @@ func _QueryAdminService_BuildDeferredIndexes_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _QueryAdminService_WaitForIndexOnline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WaitForIndexOnlineRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryAdminServiceServer).WaitForIndexOnline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/couchbase.admin.query.v1.QueryAdminService/WaitForIndexOnline",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryAdminServiceServer).WaitForIndexOnline(ctx, req.(*WaitForIndexOnlineRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // QueryAdminService_ServiceDesc is the grpc.ServiceDesc for QueryAdminService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -278,6 +310,10 @@ var QueryAdminService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BuildDeferredIndexes",
 			Handler:    _QueryAdminService_BuildDeferredIndexes_Handler,
+		},
+		{
+			MethodName: "WaitForIndexOnline",
+			Handler:    _QueryAdminService_WaitForIndexOnline_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
