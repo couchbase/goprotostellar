@@ -26,6 +26,7 @@ type CollectionAdminServiceClient interface {
 	CreateScope(ctx context.Context, in *CreateScopeRequest, opts ...grpc.CallOption) (*CreateScopeResponse, error)
 	DeleteScope(ctx context.Context, in *DeleteScopeRequest, opts ...grpc.CallOption) (*DeleteScopeResponse, error)
 	CreateCollection(ctx context.Context, in *CreateCollectionRequest, opts ...grpc.CallOption) (*CreateCollectionResponse, error)
+	UpdateCollection(ctx context.Context, in *UpdateCollectionRequest, opts ...grpc.CallOption) (*UpdateCollectionResponse, error)
 	DeleteCollection(ctx context.Context, in *DeleteCollectionRequest, opts ...grpc.CallOption) (*DeleteCollectionResponse, error)
 }
 
@@ -73,6 +74,15 @@ func (c *collectionAdminServiceClient) CreateCollection(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *collectionAdminServiceClient) UpdateCollection(ctx context.Context, in *UpdateCollectionRequest, opts ...grpc.CallOption) (*UpdateCollectionResponse, error) {
+	out := new(UpdateCollectionResponse)
+	err := c.cc.Invoke(ctx, "/couchbase.admin.collection.v1.CollectionAdminService/UpdateCollection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *collectionAdminServiceClient) DeleteCollection(ctx context.Context, in *DeleteCollectionRequest, opts ...grpc.CallOption) (*DeleteCollectionResponse, error) {
 	out := new(DeleteCollectionResponse)
 	err := c.cc.Invoke(ctx, "/couchbase.admin.collection.v1.CollectionAdminService/DeleteCollection", in, out, opts...)
@@ -90,6 +100,7 @@ type CollectionAdminServiceServer interface {
 	CreateScope(context.Context, *CreateScopeRequest) (*CreateScopeResponse, error)
 	DeleteScope(context.Context, *DeleteScopeRequest) (*DeleteScopeResponse, error)
 	CreateCollection(context.Context, *CreateCollectionRequest) (*CreateCollectionResponse, error)
+	UpdateCollection(context.Context, *UpdateCollectionRequest) (*UpdateCollectionResponse, error)
 	DeleteCollection(context.Context, *DeleteCollectionRequest) (*DeleteCollectionResponse, error)
 	mustEmbedUnimplementedCollectionAdminServiceServer()
 }
@@ -109,6 +120,9 @@ func (UnimplementedCollectionAdminServiceServer) DeleteScope(context.Context, *D
 }
 func (UnimplementedCollectionAdminServiceServer) CreateCollection(context.Context, *CreateCollectionRequest) (*CreateCollectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCollection not implemented")
+}
+func (UnimplementedCollectionAdminServiceServer) UpdateCollection(context.Context, *UpdateCollectionRequest) (*UpdateCollectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCollection not implemented")
 }
 func (UnimplementedCollectionAdminServiceServer) DeleteCollection(context.Context, *DeleteCollectionRequest) (*DeleteCollectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteCollection not implemented")
@@ -199,6 +213,24 @@ func _CollectionAdminService_CreateCollection_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CollectionAdminService_UpdateCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCollectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CollectionAdminServiceServer).UpdateCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/couchbase.admin.collection.v1.CollectionAdminService/UpdateCollection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CollectionAdminServiceServer).UpdateCollection(ctx, req.(*UpdateCollectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CollectionAdminService_DeleteCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteCollectionRequest)
 	if err := dec(in); err != nil {
@@ -239,6 +271,10 @@ var CollectionAdminService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateCollection",
 			Handler:    _CollectionAdminService_CreateCollection_Handler,
+		},
+		{
+			MethodName: "UpdateCollection",
+			Handler:    _CollectionAdminService_UpdateCollection_Handler,
 		},
 		{
 			MethodName: "DeleteCollection",
