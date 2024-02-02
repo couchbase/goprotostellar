@@ -27,6 +27,7 @@ type HooksServiceClient interface {
 	AddHooks(ctx context.Context, in *AddHooksRequest, opts ...grpc.CallOption) (*AddHooksResponse, error)
 	WatchBarrier(ctx context.Context, in *WatchBarrierRequest, opts ...grpc.CallOption) (HooksService_WatchBarrierClient, error)
 	SignalBarrier(ctx context.Context, in *SignalBarrierRequest, opts ...grpc.CallOption) (*SignalBarrierResponse, error)
+	WatchRequests(ctx context.Context, in *WatchRequestsRequest, opts ...grpc.CallOption) (HooksService_WatchRequestsClient, error)
 }
 
 type hooksServiceClient struct {
@@ -105,6 +106,38 @@ func (c *hooksServiceClient) SignalBarrier(ctx context.Context, in *SignalBarrie
 	return out, nil
 }
 
+func (c *hooksServiceClient) WatchRequests(ctx context.Context, in *WatchRequestsRequest, opts ...grpc.CallOption) (HooksService_WatchRequestsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &HooksService_ServiceDesc.Streams[1], "/couchbase.internal.hooks.v1.HooksService/WatchRequests", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &hooksServiceWatchRequestsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type HooksService_WatchRequestsClient interface {
+	Recv() (*WatchRequestsResponse, error)
+	grpc.ClientStream
+}
+
+type hooksServiceWatchRequestsClient struct {
+	grpc.ClientStream
+}
+
+func (x *hooksServiceWatchRequestsClient) Recv() (*WatchRequestsResponse, error) {
+	m := new(WatchRequestsResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // HooksServiceServer is the server API for HooksService service.
 // All implementations must embed UnimplementedHooksServiceServer
 // for forward compatibility
@@ -114,6 +147,7 @@ type HooksServiceServer interface {
 	AddHooks(context.Context, *AddHooksRequest) (*AddHooksResponse, error)
 	WatchBarrier(*WatchBarrierRequest, HooksService_WatchBarrierServer) error
 	SignalBarrier(context.Context, *SignalBarrierRequest) (*SignalBarrierResponse, error)
+	WatchRequests(*WatchRequestsRequest, HooksService_WatchRequestsServer) error
 	mustEmbedUnimplementedHooksServiceServer()
 }
 
@@ -135,6 +169,9 @@ func (UnimplementedHooksServiceServer) WatchBarrier(*WatchBarrierRequest, HooksS
 }
 func (UnimplementedHooksServiceServer) SignalBarrier(context.Context, *SignalBarrierRequest) (*SignalBarrierResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignalBarrier not implemented")
+}
+func (UnimplementedHooksServiceServer) WatchRequests(*WatchRequestsRequest, HooksService_WatchRequestsServer) error {
+	return status.Errorf(codes.Unimplemented, "method WatchRequests not implemented")
 }
 func (UnimplementedHooksServiceServer) mustEmbedUnimplementedHooksServiceServer() {}
 
@@ -242,6 +279,27 @@ func _HooksService_SignalBarrier_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HooksService_WatchRequests_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(WatchRequestsRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(HooksServiceServer).WatchRequests(m, &hooksServiceWatchRequestsServer{stream})
+}
+
+type HooksService_WatchRequestsServer interface {
+	Send(*WatchRequestsResponse) error
+	grpc.ServerStream
+}
+
+type hooksServiceWatchRequestsServer struct {
+	grpc.ServerStream
+}
+
+func (x *hooksServiceWatchRequestsServer) Send(m *WatchRequestsResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // HooksService_ServiceDesc is the grpc.ServiceDesc for HooksService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -270,6 +328,11 @@ var HooksService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "WatchBarrier",
 			Handler:       _HooksService_WatchBarrier_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "WatchRequests",
+			Handler:       _HooksService_WatchRequests_Handler,
 			ServerStreams: true,
 		},
 	},
