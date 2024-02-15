@@ -1,3 +1,3 @@
 # Generation
 
-run `go generate ./..` to build interfaces.
+Run `go generate` to build interfaces.
