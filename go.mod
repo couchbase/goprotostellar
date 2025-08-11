@@ -1,6 +1,6 @@
 module github.com/couchbase/goprotostellar
 
-go 1.18
+go 1.22
 
 require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240213162025-012b6fc9bca9
