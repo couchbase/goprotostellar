@@ -13,5 +13,6 @@
 //go:generate protostellar couchbase/admin/search/v1/search.proto
 //go:generate protostellar couchbase/internal/hooks/v1/hooks.proto
 //go:generate protostellar couchbase/internal/xdcr/v1/xdcr.proto
+//go:generate protostellar couchbase/routing/v2/routing.proto
 
 package main
