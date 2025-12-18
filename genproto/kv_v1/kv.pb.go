@@ -827,7 +827,7 @@ type GetAndLockRequest struct {
 	ScopeName      string                 `protobuf:"bytes,2,opt,name=scope_name,json=scopeName,proto3" json:"scope_name,omitempty"`
 	CollectionName string                 `protobuf:"bytes,3,opt,name=collection_name,json=collectionName,proto3" json:"collection_name,omitempty"`
 	Key            string                 `protobuf:"bytes,4,opt,name=key,proto3" json:"key,omitempty"`
-	LockTimeSecs   uint32                 `protobuf:"varint,5,opt,name=lock_time_secs,json=lockTimeSecs,proto3" json:"lock_time_secs,omitempty"`
+	LockTime       uint32                 `protobuf:"varint,5,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
 	Compression    *CompressionEnabled    `protobuf:"varint,6,opt,name=compression,proto3,enum=couchbase.kv.v1.CompressionEnabled,oneof" json:"compression,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
@@ -891,9 +891,9 @@ func (x *GetAndLockRequest) GetKey() string {
 	return ""
 }
 
-func (x *GetAndLockRequest) GetLockTimeSecs() uint32 {
+func (x *GetAndLockRequest) GetLockTime() uint32 {
 	if x != nil {
-		return x.LockTimeSecs
+		return x.LockTime
 	}
 	return 0
 }
@@ -3876,15 +3876,15 @@ const file_couchbase_kv_v1_kv_proto_rawDesc = "" +
 	"\rcontent_flags\x18\x06 \x01(\rR\fcontentFlags\x12\x10\n" +
 	"\x03cas\x18\x03 \x01(\x04R\x03cas\x122\n" +
 	"\x06expiry\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x06expiryB\t\n" +
-	"\acontentJ\x04\b\x02\x10\x03J\x04\b\x05\x10\x06\"\x90\x02\n" +
+	"\acontentJ\x04\b\x02\x10\x03J\x04\b\x05\x10\x06\"\x87\x02\n" +
 	"\x11GetAndLockRequest\x12\x1f\n" +
 	"\vbucket_name\x18\x01 \x01(\tR\n" +
 	"bucketName\x12\x1d\n" +
 	"\n" +
 	"scope_name\x18\x02 \x01(\tR\tscopeName\x12'\n" +
 	"\x0fcollection_name\x18\x03 \x01(\tR\x0ecollectionName\x12\x10\n" +
-	"\x03key\x18\x04 \x01(\tR\x03key\x12$\n" +
-	"\x0elock_time_secs\x18\x05 \x01(\rR\flockTimeSecs\x12J\n" +
+	"\x03key\x18\x04 \x01(\tR\x03key\x12\x1b\n" +
+	"\tlock_time\x18\x05 \x01(\rR\blockTime\x12J\n" +
 	"\vcompression\x18\x06 \x01(\x0e2#.couchbase.kv.v1.CompressionEnabledH\x00R\vcompression\x88\x01\x01B\x0e\n" +
 	"\f_compression\"\xfc\x01\n" +
 	"\x12GetAndLockResponse\x123\n" +
