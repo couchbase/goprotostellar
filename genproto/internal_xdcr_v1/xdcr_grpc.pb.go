@@ -27,6 +27,7 @@ const (
 	XdcrService_GetDocument_FullMethodName      = "/couchbase.internal.xdcr.v1.XdcrService/GetDocument"
 	XdcrService_CheckDocument_FullMethodName    = "/couchbase.internal.xdcr.v1.XdcrService/CheckDocument"
 	XdcrService_PushDocument_FullMethodName     = "/couchbase.internal.xdcr.v1.XdcrService/PushDocument"
+	XdcrService_PushDocuments_FullMethodName    = "/couchbase.internal.xdcr.v1.XdcrService/PushDocuments"
 )
 
 // XdcrServiceClient is the client API for XdcrService service.
@@ -43,6 +44,7 @@ type XdcrServiceClient interface {
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
 	CheckDocument(ctx context.Context, in *CheckDocumentRequest, opts ...grpc.CallOption) (*CheckDocumentResponse, error)
 	PushDocument(ctx context.Context, in *PushDocumentRequest, opts ...grpc.CallOption) (*PushDocumentResponse, error)
+	PushDocuments(ctx context.Context, in *PushDocumentsRequest, opts ...grpc.CallOption) (*PushDocumentsResponse, error)
 }
 
 type xdcrServiceClient struct {
@@ -151,6 +153,16 @@ func (c *xdcrServiceClient) PushDocument(ctx context.Context, in *PushDocumentRe
 	return out, nil
 }
 
+func (c *xdcrServiceClient) PushDocuments(ctx context.Context, in *PushDocumentsRequest, opts ...grpc.CallOption) (*PushDocumentsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PushDocumentsResponse)
+	err := c.cc.Invoke(ctx, XdcrService_PushDocuments_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // XdcrServiceServer is the server API for XdcrService service.
 // All implementations must embed UnimplementedXdcrServiceServer
 // for forward compatibility.
@@ -165,6 +177,7 @@ type XdcrServiceServer interface {
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
 	CheckDocument(context.Context, *CheckDocumentRequest) (*CheckDocumentResponse, error)
 	PushDocument(context.Context, *PushDocumentRequest) (*PushDocumentResponse, error)
+	PushDocuments(context.Context, *PushDocumentsRequest) (*PushDocumentsResponse, error)
 	mustEmbedUnimplementedXdcrServiceServer()
 }
 
@@ -198,6 +211,9 @@ func (UnimplementedXdcrServiceServer) CheckDocument(context.Context, *CheckDocum
 }
 func (UnimplementedXdcrServiceServer) PushDocument(context.Context, *PushDocumentRequest) (*PushDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PushDocument not implemented")
+}
+func (UnimplementedXdcrServiceServer) PushDocuments(context.Context, *PushDocumentsRequest) (*PushDocumentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PushDocuments not implemented")
 }
 func (UnimplementedXdcrServiceServer) mustEmbedUnimplementedXdcrServiceServer() {}
 func (UnimplementedXdcrServiceServer) testEmbeddedByValue()                     {}
@@ -350,6 +366,24 @@ func _XdcrService_PushDocument_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _XdcrService_PushDocuments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PushDocumentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(XdcrServiceServer).PushDocuments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: XdcrService_PushDocuments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(XdcrServiceServer).PushDocuments(ctx, req.(*PushDocumentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // XdcrService_ServiceDesc is the grpc.ServiceDesc for XdcrService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -380,6 +414,10 @@ var XdcrService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PushDocument",
 			Handler:    _XdcrService_PushDocument_Handler,
+		},
+		{
+			MethodName: "PushDocuments",
+			Handler:    _XdcrService_PushDocuments_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
