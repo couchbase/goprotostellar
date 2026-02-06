@@ -71,6 +71,52 @@ func (ConflictResolutionType) EnumDescriptor() ([]byte, []int) {
 	return file_couchbase_internal_xdcr_v1_xdcr_proto_rawDescGZIP(), []int{0}
 }
 
+type BucketType int32
+
+const (
+	BucketType_BUCKET_TYPE_COUCHBASE BucketType = 0
+	BucketType_BUCKET_TYPE_EPHEMERAL BucketType = 1
+)
+
+// Enum value maps for BucketType.
+var (
+	BucketType_name = map[int32]string{
+		0: "BUCKET_TYPE_COUCHBASE",
+		1: "BUCKET_TYPE_EPHEMERAL",
+	}
+	BucketType_value = map[string]int32{
+		"BUCKET_TYPE_COUCHBASE": 0,
+		"BUCKET_TYPE_EPHEMERAL": 1,
+	}
+)
+
+func (x BucketType) Enum() *BucketType {
+	p := new(BucketType)
+	*p = x
+	return p
+}
+
+func (x BucketType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (BucketType) Descriptor() protoreflect.EnumDescriptor {
+	return file_couchbase_internal_xdcr_v1_xdcr_proto_enumTypes[1].Descriptor()
+}
+
+func (BucketType) Type() protoreflect.EnumType {
+	return &file_couchbase_internal_xdcr_v1_xdcr_proto_enumTypes[1]
+}
+
+func (x BucketType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use BucketType.Descriptor instead.
+func (BucketType) EnumDescriptor() ([]byte, []int) {
+	return file_couchbase_internal_xdcr_v1_xdcr_proto_rawDescGZIP(), []int{1}
+}
+
 type ContentType int32
 
 const (
@@ -101,11 +147,11 @@ func (x ContentType) String() string {
 }
 
 func (ContentType) Descriptor() protoreflect.EnumDescriptor {
-	return file_couchbase_internal_xdcr_v1_xdcr_proto_enumTypes[1].Descriptor()
+	return file_couchbase_internal_xdcr_v1_xdcr_proto_enumTypes[2].Descriptor()
 }
 
 func (ContentType) Type() protoreflect.EnumType {
-	return &file_couchbase_internal_xdcr_v1_xdcr_proto_enumTypes[1]
+	return &file_couchbase_internal_xdcr_v1_xdcr_proto_enumTypes[2]
 }
 
 func (x ContentType) Number() protoreflect.EnumNumber {
@@ -114,7 +160,7 @@ func (x ContentType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ContentType.Descriptor instead.
 func (ContentType) EnumDescriptor() ([]byte, []int) {
-	return file_couchbase_internal_xdcr_v1_xdcr_proto_rawDescGZIP(), []int{1}
+	return file_couchbase_internal_xdcr_v1_xdcr_proto_rawDescGZIP(), []int{2}
 }
 
 type HeartbeatRequest struct {
@@ -327,6 +373,7 @@ type GetBucketInfoResponse struct {
 	NumVbuckets                   uint32                 `protobuf:"varint,3,opt,name=num_vbuckets,json=numVbuckets,proto3" json:"num_vbuckets,omitempty"`
 	ConflictResolutionType        ConflictResolutionType `protobuf:"varint,4,opt,name=conflict_resolution_type,json=conflictResolutionType,proto3,enum=couchbase.internal.xdcr.v1.ConflictResolutionType" json:"conflict_resolution_type,omitempty"`
 	CrossClusterVersioningEnabled bool                   `protobuf:"varint,5,opt,name=cross_cluster_versioning_enabled,json=crossClusterVersioningEnabled,proto3" json:"cross_cluster_versioning_enabled,omitempty"`
+	BucketType                    *BucketType            `protobuf:"varint,6,opt,name=bucket_type,json=bucketType,proto3,enum=couchbase.internal.xdcr.v1.BucketType,oneof" json:"bucket_type,omitempty"`
 	unknownFields                 protoimpl.UnknownFields
 	sizeCache                     protoimpl.SizeCache
 }
@@ -387,6 +434,13 @@ func (x *GetBucketInfoResponse) GetCrossClusterVersioningEnabled() bool {
 		return x.CrossClusterVersioningEnabled
 	}
 	return false
+}
+
+func (x *GetBucketInfoResponse) GetBucketType() BucketType {
+	if x != nil && x.BucketType != nil {
+		return *x.BucketType
+	}
+	return BucketType_BUCKET_TYPE_COUCHBASE
 }
 
 // This is the one we should use, streaming individual vbuckets as we get them
@@ -1437,13 +1491,16 @@ const file_couchbase_internal_xdcr_v1_xdcr_proto_rawDesc = "" +
 	"\fcluster_uuid\x18\x01 \x01(\tR\vclusterUuid\"7\n" +
 	"\x14GetBucketInfoRequest\x12\x1f\n" +
 	"\vbucket_name\x18\x01 \x01(\tR\n" +
-	"bucketName\"\x92\x02\n" +
+	"bucketName\"\xf0\x02\n" +
 	"\x15GetBucketInfoResponse\x12\x1f\n" +
 	"\vbucket_uuid\x18\x02 \x01(\tR\n" +
 	"bucketUuid\x12!\n" +
 	"\fnum_vbuckets\x18\x03 \x01(\rR\vnumVbuckets\x12l\n" +
 	"\x18conflict_resolution_type\x18\x04 \x01(\x0e22.couchbase.internal.xdcr.v1.ConflictResolutionTypeR\x16conflictResolutionType\x12G\n" +
-	" cross_cluster_versioning_enabled\x18\x05 \x01(\bR\x1dcrossClusterVersioningEnabled\"\xdc\x01\n" +
+	" cross_cluster_versioning_enabled\x18\x05 \x01(\bR\x1dcrossClusterVersioningEnabled\x12L\n" +
+	"\vbucket_type\x18\x06 \x01(\x0e2&.couchbase.internal.xdcr.v1.BucketTypeH\x00R\n" +
+	"bucketType\x88\x01\x01B\x0e\n" +
+	"\f_bucket_type\"\xdc\x01\n" +
 	"\x15GetVbucketInfoRequest\x12\x1f\n" +
 	"\vbucket_name\x18\x01 \x01(\tR\n" +
 	"bucketName\x12\x1f\n" +
@@ -1563,7 +1620,11 @@ const file_couchbase_internal_xdcr_v1_xdcr_proto_rawDesc = "" +
 	"\x16ConflictResolutionType\x12&\n" +
 	"\"CONFLICT_RESOLUTION_TYPE_TIMESTAMP\x10\x00\x12,\n" +
 	"(CONFLICT_RESOLUTION_TYPE_SEQUENCE_NUMBER\x10\x01\x12#\n" +
-	"\x1fCONFLICT_RESOLUTION_TYPE_CUSTOM\x10\x02*>\n" +
+	"\x1fCONFLICT_RESOLUTION_TYPE_CUSTOM\x10\x02*B\n" +
+	"\n" +
+	"BucketType\x12\x19\n" +
+	"\x15BUCKET_TYPE_COUCHBASE\x10\x00\x12\x19\n" +
+	"\x15BUCKET_TYPE_EPHEMERAL\x10\x01*>\n" +
 	"\vContentType\x12\x18\n" +
 	"\x14CONTENT_TYPE_NONJSON\x10\x00\x12\x15\n" +
 	"\x11CONTENT_TYPE_JSON\x10\x012\xcc\a\n" +
@@ -1589,68 +1650,70 @@ func file_couchbase_internal_xdcr_v1_xdcr_proto_rawDescGZIP() []byte {
 	return file_couchbase_internal_xdcr_v1_xdcr_proto_rawDescData
 }
 
-var file_couchbase_internal_xdcr_v1_xdcr_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_couchbase_internal_xdcr_v1_xdcr_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_couchbase_internal_xdcr_v1_xdcr_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
 var file_couchbase_internal_xdcr_v1_xdcr_proto_goTypes = []any{
 	(ConflictResolutionType)(0),                 // 0: couchbase.internal.xdcr.v1.ConflictResolutionType
-	(ContentType)(0),                            // 1: couchbase.internal.xdcr.v1.ContentType
-	(*HeartbeatRequest)(nil),                    // 2: couchbase.internal.xdcr.v1.HeartbeatRequest
-	(*HeartbeatResponse)(nil),                   // 3: couchbase.internal.xdcr.v1.HeartbeatResponse
-	(*GetClusterInfoRequest)(nil),               // 4: couchbase.internal.xdcr.v1.GetClusterInfoRequest
-	(*GetClusterInfoResponse)(nil),              // 5: couchbase.internal.xdcr.v1.GetClusterInfoResponse
-	(*GetBucketInfoRequest)(nil),                // 6: couchbase.internal.xdcr.v1.GetBucketInfoRequest
-	(*GetBucketInfoResponse)(nil),               // 7: couchbase.internal.xdcr.v1.GetBucketInfoResponse
-	(*GetVbucketInfoRequest)(nil),               // 8: couchbase.internal.xdcr.v1.GetVbucketInfoRequest
-	(*GetVbucketInfoResponse)(nil),              // 9: couchbase.internal.xdcr.v1.GetVbucketInfoResponse
-	(*WatchCollectionsRequest)(nil),             // 10: couchbase.internal.xdcr.v1.WatchCollectionsRequest
-	(*WatchCollectionsResponse)(nil),            // 11: couchbase.internal.xdcr.v1.WatchCollectionsResponse
-	(*GetDocumentRequest)(nil),                  // 12: couchbase.internal.xdcr.v1.GetDocumentRequest
-	(*GetDocumentResponse)(nil),                 // 13: couchbase.internal.xdcr.v1.GetDocumentResponse
-	(*CheckDocumentRequest)(nil),                // 14: couchbase.internal.xdcr.v1.CheckDocumentRequest
-	(*CheckDocumentResponse)(nil),               // 15: couchbase.internal.xdcr.v1.CheckDocumentResponse
-	(*PushDocumentRequest)(nil),                 // 16: couchbase.internal.xdcr.v1.PushDocumentRequest
-	(*PushDocumentResponse)(nil),                // 17: couchbase.internal.xdcr.v1.PushDocumentResponse
-	(*GetVbucketInfoResponse_HistoryEntry)(nil), // 18: couchbase.internal.xdcr.v1.GetVbucketInfoResponse.HistoryEntry
-	(*GetVbucketInfoResponse_VbucketState)(nil), // 19: couchbase.internal.xdcr.v1.GetVbucketInfoResponse.VbucketState
-	(*WatchCollectionsResponse_Collection)(nil), // 20: couchbase.internal.xdcr.v1.WatchCollectionsResponse.Collection
-	(*WatchCollectionsResponse_Scope)(nil),      // 21: couchbase.internal.xdcr.v1.WatchCollectionsResponse.Scope
-	nil,                                         // 22: couchbase.internal.xdcr.v1.GetDocumentResponse.XattrsEntry
-	nil,                                         // 23: couchbase.internal.xdcr.v1.PushDocumentRequest.XattrsEntry
-	(*timestamppb.Timestamp)(nil),               // 24: google.protobuf.Timestamp
+	(BucketType)(0),                             // 1: couchbase.internal.xdcr.v1.BucketType
+	(ContentType)(0),                            // 2: couchbase.internal.xdcr.v1.ContentType
+	(*HeartbeatRequest)(nil),                    // 3: couchbase.internal.xdcr.v1.HeartbeatRequest
+	(*HeartbeatResponse)(nil),                   // 4: couchbase.internal.xdcr.v1.HeartbeatResponse
+	(*GetClusterInfoRequest)(nil),               // 5: couchbase.internal.xdcr.v1.GetClusterInfoRequest
+	(*GetClusterInfoResponse)(nil),              // 6: couchbase.internal.xdcr.v1.GetClusterInfoResponse
+	(*GetBucketInfoRequest)(nil),                // 7: couchbase.internal.xdcr.v1.GetBucketInfoRequest
+	(*GetBucketInfoResponse)(nil),               // 8: couchbase.internal.xdcr.v1.GetBucketInfoResponse
+	(*GetVbucketInfoRequest)(nil),               // 9: couchbase.internal.xdcr.v1.GetVbucketInfoRequest
+	(*GetVbucketInfoResponse)(nil),              // 10: couchbase.internal.xdcr.v1.GetVbucketInfoResponse
+	(*WatchCollectionsRequest)(nil),             // 11: couchbase.internal.xdcr.v1.WatchCollectionsRequest
+	(*WatchCollectionsResponse)(nil),            // 12: couchbase.internal.xdcr.v1.WatchCollectionsResponse
+	(*GetDocumentRequest)(nil),                  // 13: couchbase.internal.xdcr.v1.GetDocumentRequest
+	(*GetDocumentResponse)(nil),                 // 14: couchbase.internal.xdcr.v1.GetDocumentResponse
+	(*CheckDocumentRequest)(nil),                // 15: couchbase.internal.xdcr.v1.CheckDocumentRequest
+	(*CheckDocumentResponse)(nil),               // 16: couchbase.internal.xdcr.v1.CheckDocumentResponse
+	(*PushDocumentRequest)(nil),                 // 17: couchbase.internal.xdcr.v1.PushDocumentRequest
+	(*PushDocumentResponse)(nil),                // 18: couchbase.internal.xdcr.v1.PushDocumentResponse
+	(*GetVbucketInfoResponse_HistoryEntry)(nil), // 19: couchbase.internal.xdcr.v1.GetVbucketInfoResponse.HistoryEntry
+	(*GetVbucketInfoResponse_VbucketState)(nil), // 20: couchbase.internal.xdcr.v1.GetVbucketInfoResponse.VbucketState
+	(*WatchCollectionsResponse_Collection)(nil), // 21: couchbase.internal.xdcr.v1.WatchCollectionsResponse.Collection
+	(*WatchCollectionsResponse_Scope)(nil),      // 22: couchbase.internal.xdcr.v1.WatchCollectionsResponse.Scope
+	nil,                                         // 23: couchbase.internal.xdcr.v1.GetDocumentResponse.XattrsEntry
+	nil,                                         // 24: couchbase.internal.xdcr.v1.PushDocumentRequest.XattrsEntry
+	(*timestamppb.Timestamp)(nil),               // 25: google.protobuf.Timestamp
 }
 var file_couchbase_internal_xdcr_v1_xdcr_proto_depIdxs = []int32{
 	0,  // 0: couchbase.internal.xdcr.v1.GetBucketInfoResponse.conflict_resolution_type:type_name -> couchbase.internal.xdcr.v1.ConflictResolutionType
-	19, // 1: couchbase.internal.xdcr.v1.GetVbucketInfoResponse.vbuckets:type_name -> couchbase.internal.xdcr.v1.GetVbucketInfoResponse.VbucketState
-	21, // 2: couchbase.internal.xdcr.v1.WatchCollectionsResponse.scopes:type_name -> couchbase.internal.xdcr.v1.WatchCollectionsResponse.Scope
-	24, // 3: couchbase.internal.xdcr.v1.GetDocumentResponse.expiry:type_name -> google.protobuf.Timestamp
-	22, // 4: couchbase.internal.xdcr.v1.GetDocumentResponse.xattrs:type_name -> couchbase.internal.xdcr.v1.GetDocumentResponse.XattrsEntry
-	24, // 5: couchbase.internal.xdcr.v1.CheckDocumentRequest.expiry_time:type_name -> google.protobuf.Timestamp
-	1,  // 6: couchbase.internal.xdcr.v1.PushDocumentRequest.content_type:type_name -> couchbase.internal.xdcr.v1.ContentType
-	23, // 7: couchbase.internal.xdcr.v1.PushDocumentRequest.xattrs:type_name -> couchbase.internal.xdcr.v1.PushDocumentRequest.XattrsEntry
-	24, // 8: couchbase.internal.xdcr.v1.PushDocumentRequest.expiry_time:type_name -> google.protobuf.Timestamp
-	18, // 9: couchbase.internal.xdcr.v1.GetVbucketInfoResponse.VbucketState.history:type_name -> couchbase.internal.xdcr.v1.GetVbucketInfoResponse.HistoryEntry
-	20, // 10: couchbase.internal.xdcr.v1.WatchCollectionsResponse.Scope.collections:type_name -> couchbase.internal.xdcr.v1.WatchCollectionsResponse.Collection
-	2,  // 11: couchbase.internal.xdcr.v1.XdcrService.Heartbeat:input_type -> couchbase.internal.xdcr.v1.HeartbeatRequest
-	4,  // 12: couchbase.internal.xdcr.v1.XdcrService.GetClusterInfo:input_type -> couchbase.internal.xdcr.v1.GetClusterInfoRequest
-	6,  // 13: couchbase.internal.xdcr.v1.XdcrService.GetBucketInfo:input_type -> couchbase.internal.xdcr.v1.GetBucketInfoRequest
-	8,  // 14: couchbase.internal.xdcr.v1.XdcrService.GetVbucketInfo:input_type -> couchbase.internal.xdcr.v1.GetVbucketInfoRequest
-	10, // 15: couchbase.internal.xdcr.v1.XdcrService.WatchCollections:input_type -> couchbase.internal.xdcr.v1.WatchCollectionsRequest
-	12, // 16: couchbase.internal.xdcr.v1.XdcrService.GetDocument:input_type -> couchbase.internal.xdcr.v1.GetDocumentRequest
-	14, // 17: couchbase.internal.xdcr.v1.XdcrService.CheckDocument:input_type -> couchbase.internal.xdcr.v1.CheckDocumentRequest
-	16, // 18: couchbase.internal.xdcr.v1.XdcrService.PushDocument:input_type -> couchbase.internal.xdcr.v1.PushDocumentRequest
-	3,  // 19: couchbase.internal.xdcr.v1.XdcrService.Heartbeat:output_type -> couchbase.internal.xdcr.v1.HeartbeatResponse
-	5,  // 20: couchbase.internal.xdcr.v1.XdcrService.GetClusterInfo:output_type -> couchbase.internal.xdcr.v1.GetClusterInfoResponse
-	7,  // 21: couchbase.internal.xdcr.v1.XdcrService.GetBucketInfo:output_type -> couchbase.internal.xdcr.v1.GetBucketInfoResponse
-	9,  // 22: couchbase.internal.xdcr.v1.XdcrService.GetVbucketInfo:output_type -> couchbase.internal.xdcr.v1.GetVbucketInfoResponse
-	11, // 23: couchbase.internal.xdcr.v1.XdcrService.WatchCollections:output_type -> couchbase.internal.xdcr.v1.WatchCollectionsResponse
-	13, // 24: couchbase.internal.xdcr.v1.XdcrService.GetDocument:output_type -> couchbase.internal.xdcr.v1.GetDocumentResponse
-	15, // 25: couchbase.internal.xdcr.v1.XdcrService.CheckDocument:output_type -> couchbase.internal.xdcr.v1.CheckDocumentResponse
-	17, // 26: couchbase.internal.xdcr.v1.XdcrService.PushDocument:output_type -> couchbase.internal.xdcr.v1.PushDocumentResponse
-	19, // [19:27] is the sub-list for method output_type
-	11, // [11:19] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	1,  // 1: couchbase.internal.xdcr.v1.GetBucketInfoResponse.bucket_type:type_name -> couchbase.internal.xdcr.v1.BucketType
+	20, // 2: couchbase.internal.xdcr.v1.GetVbucketInfoResponse.vbuckets:type_name -> couchbase.internal.xdcr.v1.GetVbucketInfoResponse.VbucketState
+	22, // 3: couchbase.internal.xdcr.v1.WatchCollectionsResponse.scopes:type_name -> couchbase.internal.xdcr.v1.WatchCollectionsResponse.Scope
+	25, // 4: couchbase.internal.xdcr.v1.GetDocumentResponse.expiry:type_name -> google.protobuf.Timestamp
+	23, // 5: couchbase.internal.xdcr.v1.GetDocumentResponse.xattrs:type_name -> couchbase.internal.xdcr.v1.GetDocumentResponse.XattrsEntry
+	25, // 6: couchbase.internal.xdcr.v1.CheckDocumentRequest.expiry_time:type_name -> google.protobuf.Timestamp
+	2,  // 7: couchbase.internal.xdcr.v1.PushDocumentRequest.content_type:type_name -> couchbase.internal.xdcr.v1.ContentType
+	24, // 8: couchbase.internal.xdcr.v1.PushDocumentRequest.xattrs:type_name -> couchbase.internal.xdcr.v1.PushDocumentRequest.XattrsEntry
+	25, // 9: couchbase.internal.xdcr.v1.PushDocumentRequest.expiry_time:type_name -> google.protobuf.Timestamp
+	19, // 10: couchbase.internal.xdcr.v1.GetVbucketInfoResponse.VbucketState.history:type_name -> couchbase.internal.xdcr.v1.GetVbucketInfoResponse.HistoryEntry
+	21, // 11: couchbase.internal.xdcr.v1.WatchCollectionsResponse.Scope.collections:type_name -> couchbase.internal.xdcr.v1.WatchCollectionsResponse.Collection
+	3,  // 12: couchbase.internal.xdcr.v1.XdcrService.Heartbeat:input_type -> couchbase.internal.xdcr.v1.HeartbeatRequest
+	5,  // 13: couchbase.internal.xdcr.v1.XdcrService.GetClusterInfo:input_type -> couchbase.internal.xdcr.v1.GetClusterInfoRequest
+	7,  // 14: couchbase.internal.xdcr.v1.XdcrService.GetBucketInfo:input_type -> couchbase.internal.xdcr.v1.GetBucketInfoRequest
+	9,  // 15: couchbase.internal.xdcr.v1.XdcrService.GetVbucketInfo:input_type -> couchbase.internal.xdcr.v1.GetVbucketInfoRequest
+	11, // 16: couchbase.internal.xdcr.v1.XdcrService.WatchCollections:input_type -> couchbase.internal.xdcr.v1.WatchCollectionsRequest
+	13, // 17: couchbase.internal.xdcr.v1.XdcrService.GetDocument:input_type -> couchbase.internal.xdcr.v1.GetDocumentRequest
+	15, // 18: couchbase.internal.xdcr.v1.XdcrService.CheckDocument:input_type -> couchbase.internal.xdcr.v1.CheckDocumentRequest
+	17, // 19: couchbase.internal.xdcr.v1.XdcrService.PushDocument:input_type -> couchbase.internal.xdcr.v1.PushDocumentRequest
+	4,  // 20: couchbase.internal.xdcr.v1.XdcrService.Heartbeat:output_type -> couchbase.internal.xdcr.v1.HeartbeatResponse
+	6,  // 21: couchbase.internal.xdcr.v1.XdcrService.GetClusterInfo:output_type -> couchbase.internal.xdcr.v1.GetClusterInfoResponse
+	8,  // 22: couchbase.internal.xdcr.v1.XdcrService.GetBucketInfo:output_type -> couchbase.internal.xdcr.v1.GetBucketInfoResponse
+	10, // 23: couchbase.internal.xdcr.v1.XdcrService.GetVbucketInfo:output_type -> couchbase.internal.xdcr.v1.GetVbucketInfoResponse
+	12, // 24: couchbase.internal.xdcr.v1.XdcrService.WatchCollections:output_type -> couchbase.internal.xdcr.v1.WatchCollectionsResponse
+	14, // 25: couchbase.internal.xdcr.v1.XdcrService.GetDocument:output_type -> couchbase.internal.xdcr.v1.GetDocumentResponse
+	16, // 26: couchbase.internal.xdcr.v1.XdcrService.CheckDocument:output_type -> couchbase.internal.xdcr.v1.CheckDocumentResponse
+	18, // 27: couchbase.internal.xdcr.v1.XdcrService.PushDocument:output_type -> couchbase.internal.xdcr.v1.PushDocumentResponse
+	20, // [20:28] is the sub-list for method output_type
+	12, // [12:20] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_couchbase_internal_xdcr_v1_xdcr_proto_init() }
@@ -1658,6 +1721,7 @@ func file_couchbase_internal_xdcr_v1_xdcr_proto_init() {
 	if File_couchbase_internal_xdcr_v1_xdcr_proto != nil {
 		return
 	}
+	file_couchbase_internal_xdcr_v1_xdcr_proto_msgTypes[5].OneofWrappers = []any{}
 	file_couchbase_internal_xdcr_v1_xdcr_proto_msgTypes[6].OneofWrappers = []any{}
 	file_couchbase_internal_xdcr_v1_xdcr_proto_msgTypes[10].OneofWrappers = []any{}
 	file_couchbase_internal_xdcr_v1_xdcr_proto_msgTypes[11].OneofWrappers = []any{}
@@ -1672,7 +1736,7 @@ func file_couchbase_internal_xdcr_v1_xdcr_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_couchbase_internal_xdcr_v1_xdcr_proto_rawDesc), len(file_couchbase_internal_xdcr_v1_xdcr_proto_rawDesc)),
-			NumEnums:      2,
+			NumEnums:      3,
 			NumMessages:   22,
 			NumExtensions: 0,
 			NumServices:   1,
