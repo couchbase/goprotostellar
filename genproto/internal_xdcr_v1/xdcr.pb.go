@@ -958,7 +958,9 @@ type CheckDocumentRequest struct {
 	// The expiry time of the source document.
 	ExpiryTime *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=expiry_time,json=expiryTime,proto3,oneof" json:"expiry_time,omitempty"`
 	// Whether the source document is a tombstone.
-	IsDeleted     bool `protobuf:"varint,10,opt,name=is_deleted,json=isDeleted,proto3" json:"is_deleted,omitempty"`
+	IsDeleted bool `protobuf:"varint,10,opt,name=is_deleted,json=isDeleted,proto3" json:"is_deleted,omitempty"`
+	// The vbucket UUID for disambiguating cluster/bucket identity.
+	VbUuid        *uint64 `protobuf:"varint,11,opt,name=vb_uuid,json=vbUuid,proto3,oneof" json:"vb_uuid,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1061,6 +1063,13 @@ func (x *CheckDocumentRequest) GetIsDeleted() bool {
 		return x.IsDeleted
 	}
 	return false
+}
+
+func (x *CheckDocumentRequest) GetVbUuid() uint64 {
+	if x != nil && x.VbUuid != nil {
+		return *x.VbUuid
+	}
+	return 0
 }
 
 // CheckDocumentResponse indicates whether the document already exists
@@ -1703,7 +1712,7 @@ const file_couchbase_internal_xdcr_v1_xdcr_proto_rawDesc = "" +
 	"\vXattrsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\fR\x05value:\x028\x01B\x15\n" +
-	"\x13_content_compressed\"\xf9\x02\n" +
+	"\x13_content_compressed\"\xa3\x03\n" +
 	"\x14CheckDocumentRequest\x12\x1f\n" +
 	"\vbucket_name\x18\x01 \x01(\tR\n" +
 	"bucketName\x12\x1d\n" +
@@ -1720,8 +1729,11 @@ const file_couchbase_internal_xdcr_v1_xdcr_proto_rawDesc = "" +
 	"expiryTime\x88\x01\x01\x12\x1d\n" +
 	"\n" +
 	"is_deleted\x18\n" +
-	" \x01(\bR\tisDeletedB\x0e\n" +
-	"\f_expiry_time\"/\n" +
+	" \x01(\bR\tisDeleted\x12\x1c\n" +
+	"\avb_uuid\x18\v \x01(\x04H\x01R\x06vbUuid\x88\x01\x01B\x0e\n" +
+	"\f_expiry_timeB\n" +
+	"\n" +
+	"\b_vb_uuid\"/\n" +
 	"\x15CheckDocumentResponse\x12\x16\n" +
 	"\x06exists\x18\x01 \x01(\bR\x06exists\"\x80\x06\n" +
 	"\x13PushDocumentRequest\x12\x1f\n" +
