@@ -37,6 +37,7 @@ type ClusterEdition int32
 const (
 	ClusterEdition_CLUSTER_EDITION_COMMUNITY  ClusterEdition = 0
 	ClusterEdition_CLUSTER_EDITION_ENTERPRISE ClusterEdition = 1
+	ClusterEdition_CLUSTER_EDITION_MIXED      ClusterEdition = 2
 )
 
 // Enum value maps for ClusterEdition.
@@ -44,10 +45,12 @@ var (
 	ClusterEdition_name = map[int32]string{
 		0: "CLUSTER_EDITION_COMMUNITY",
 		1: "CLUSTER_EDITION_ENTERPRISE",
+		2: "CLUSTER_EDITION_MIXED",
 	}
 	ClusterEdition_value = map[string]int32{
 		"CLUSTER_EDITION_COMMUNITY":  0,
 		"CLUSTER_EDITION_ENTERPRISE": 1,
+		"CLUSTER_EDITION_MIXED":      2,
 	}
 )
 
@@ -1768,10 +1771,11 @@ const file_couchbase_internal_xdcr_v1_xdcr_proto_rawDesc = "" +
 	"\b_vb_uuid\">\n" +
 	"\x14PushDocumentResponse\x12\x10\n" +
 	"\x03cas\x18\x01 \x01(\x04R\x03cas\x12\x14\n" +
-	"\x05seqno\x18\x02 \x01(\x04R\x05seqno*O\n" +
+	"\x05seqno\x18\x02 \x01(\x04R\x05seqno*j\n" +
 	"\x0eClusterEdition\x12\x1d\n" +
 	"\x19CLUSTER_EDITION_COMMUNITY\x10\x00\x12\x1e\n" +
-	"\x1aCLUSTER_EDITION_ENTERPRISE\x10\x01*\x93\x01\n" +
+	"\x1aCLUSTER_EDITION_ENTERPRISE\x10\x01\x12\x19\n" +
+	"\x15CLUSTER_EDITION_MIXED\x10\x02*\x93\x01\n" +
 	"\x16ConflictResolutionType\x12&\n" +
 	"\"CONFLICT_RESOLUTION_TYPE_TIMESTAMP\x10\x00\x12,\n" +
 	"(CONFLICT_RESOLUTION_TYPE_SEQUENCE_NUMBER\x10\x01\x12#\n" +
