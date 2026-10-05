@@ -15,13 +15,14 @@ jobs:
           ref: '${{ github.event.pull_request.base.ref }}'
 
       - name: Prep
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
         run: |
-          # Checkout branch
-          git checkout -q ${{ github.event.pull_request.head.ref }}
-          
-          # Set variables
-          BASE_BRANCH=${{ github.event.pull_request.base.ref }}
-          
+          # Checkout PR head (works for PRs from forks, where the head branch doesn't exist in this repo)
+          git fetch -q origin "pull/${PR_NUMBER}/head:pr-head"
+          git checkout -q pr-head
+
           # Write BASE_BRANCH to GITHUB_ENV so commit checker can use
           echo "BASE_BRANCH=$BASE_BRANCH" | tee -a $GITHUB_ENV
 
